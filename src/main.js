@@ -1,4 +1,4 @@
-import * as THREE from 'https://unpkg.com/three@0.178.0/build/three.module.js'
+import * as THREE from '../node_modules/three/build/three.module.js'
 
 const vehicles = [
   { name: 'Tata Nexon', type: 'Manual / Automatic', tag: 'City confidence', color: '#c9973e', image: 'cars/sai-car-10.jpeg' },
@@ -21,9 +21,11 @@ app.innerHTML = `
         <p class="intro">Patient trainers, practical four-wheeler lessons, and complete license support for every kind of learner.</p>
         <div class="hero-actions"><a class="button button-primary" href="#contact">Contact us <span>↗</span></a><a class="text-link" href="#pricing">See plans <span>↓</span></a></div>
         <div class="rating"><strong>20+</strong><span class="hero-stat">Years of training</span><strong>5000+</strong><span class="hero-stat">Happy customers</span></div>
+        <div class="skills-ribbon"><span>Clutch control</span><span>Hill start</span><span>Reverse</span><span>Parking</span><span>Traffic confidence</span></div>
       </div>
       <div class="scene-wrap"><div id="scene"></div><img class="hero-car-image" src="cars/sai-car-10.jpeg" onerror="this.onerror=null;this.src='cars/sai-car-01.jpeg'" alt="Sai Sandhya Tata Nexon training car"><div class="scene-note"><span class="live-dot"></span> Real Sai Sandhya training car</div><div class="scene-label">NEXON <small>01 / 03</small></div></div>
       <div class="hero-strip"><span>100% focus on safety</span><i></i><span>Nizampet · Bachupally · Pragathi Nagar · Miyapur · KPHB</span></div>
+      <div class="hero-scroll-cue">Scroll to drive</div>
     </section>
     <section id="about" class="about-section"><div><p class="eyebrow">About Sai Sandhya</p><h2>Professional lessons for <em>confident drivers.</em></h2></div><div class="about-copy"><p>Sai Sandhya Motor Driving School offers practical four-wheeler training, license guidance, and full support for all RTA-related work.</p><ul><li>Experienced and patient trainers</li><li>Flexible pickup and drop support</li><li>Beginner-friendly, step-by-step coaching</li><li>Quick learner and permanent license help</li></ul></div></section>
     <section id="services" class="services-section"><div class="section-heading"><div><p class="eyebrow">Our services</p><h2>Everything you need<br>to <em>start driving.</em></h2></div><p class="section-note">Real skills. Clear guidance.<br>Support from first lesson to license.</p></div><div class="service-grid"><article><span>01</span><h3>Driving Training</h3><p>Four-wheeler lessons for beginners and refresher learners.</p></article><article><span>02</span><h3>License Assistance</h3><p>Support for learner permits, permanent licenses, and documents.</p></article><article><span>03</span><h3>RTA Works</h3><p>Complete help with all kinds of RTA procedures and applications.</p></article></div></section>
@@ -38,7 +40,12 @@ app.innerHTML = `
     <section id="contact" class="contact-section"><div><p class="eyebrow">Contact us</p><h2>Ready to start your<br><em>driving journey?</em></h2><div class="contact-details"><p>Call today for lessons, license support, or RTA assistance.</p><a href="tel:9000111622">📞 9000111622</a><a href="tel:9000111530">📞 9000111530</a><a class="office-location" href="https://share.google/e1ii2LoGx7KAHNjAH" target="_blank" rel="noreferrer">📍 Office location ↗</a><span>🕒 Open 5:30 AM - 9:00 PM</span></div></div><form class="lead-form" id="lead-form"><p class="form-title">Tell us how we can help</p><label>Name<input name="name" type="text" placeholder="Your name" required></label><label>Contact number<input name="phone" type="tel" placeholder="90000 00000" required></label><label>Reason for contact<select name="reason"><option>Driving training</option><option>RTA works</option><option>License assistance</option></select></label><label>Preferred area<input name="area" type="text" placeholder="Nizampet, Miyapur, KPHB..." required></label><label>Message<textarea name="message" rows="3" placeholder="Tell us about your requirement"></textarea></label><div class="form-actions"><button class="button button-primary" type="submit" data-channel="whatsapp">Send on WhatsApp ↗</button><button class="button button-mail" type="submit" data-channel="email">Send by Email ↗</button></div><small class="form-note">Your details open in WhatsApp or your email app for sending.</small></form></section>
   </main>
   <footer><span>© 2026 Sai Sandhya Motor Driving School</span><span>Learn Safe. Drive Smart. Drive Confident.</span></footer>
+  <a class="sticky-call" href="tel:+919000111622">CALL NOW · 9000111622</a>
 `
+const loader = document.querySelector('#engine-loader')
+const loaderPercent = loader.querySelector('strong')
+let loadProgress = 0
+const loadTimer = setInterval(() => { loadProgress = Math.min(loadProgress + 8, 100); loaderPercent.textContent = `${String(loadProgress).padStart(2, '0')}%`; if (loadProgress === 100) { clearInterval(loadTimer); loader.style.opacity = '0'; setTimeout(() => loader.remove(), 800) } }, 45)
 
 document.querySelectorAll('a[href="tel:9000111622"]').forEach(link => { link.href = 'tel:+919000111622' })
 document.querySelectorAll('a[href="tel:9000111530"]').forEach(link => { link.href = 'tel:+919000111530' })
@@ -72,9 +79,19 @@ const bumper = new THREE.Mesh(new THREE.BoxGeometry(2.95, .18, 1.5), new THREE.M
 for (const x of [-1, 1]) for (const z of [-.78, .78]) { const wheel = new THREE.Mesh(new THREE.CylinderGeometry(.36, .36, .2, 24), new THREE.MeshStandardMaterial({ color: 0x15191a, roughness: .7 })); wheel.rotation.x = Math.PI / 2; wheel.position.set(x, .48, z); car.add(wheel) }
 scene.add(car)
 const floor = new THREE.Mesh(new THREE.CircleGeometry(4, 64), new THREE.MeshStandardMaterial({ color: 0x244044, roughness: 1 })); floor.rotation.x = -Math.PI / 2; floor.position.y = .08; floor.scale.set(1, .42, 1); floor.receiveShadow = true; scene.add(floor)
+scene.fog = new THREE.FogExp2(0x080909, .045)
+const road = new THREE.Mesh(new THREE.PlaneGeometry(7, 45), new THREE.MeshStandardMaterial({ color: 0x141515, roughness: .9, metalness: .05 }))
+road.rotation.x = -Math.PI / 2; road.position.set(0, .06, -12); scene.add(road)
+for (let z = -31; z < 10; z += 3) { const marker = new THREE.Mesh(new THREE.PlaneGeometry(.12, 1.2), new THREE.MeshBasicMaterial({ color: 0xc89b4b })); marker.rotation.x = -Math.PI / 2; marker.position.set(0, .08, z); scene.add(marker) }
+const particles = new THREE.BufferGeometry(); const particlePositions = new Float32Array(180 * 3)
+for (let i = 0; i < particlePositions.length; i += 3) { particlePositions[i] = (Math.random() - .5) * 12; particlePositions[i + 1] = Math.random() * 5; particlePositions[i + 2] = (Math.random() - .5) * 25 }
+particles.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3)); scene.add(new THREE.Points(particles, new THREE.PointsMaterial({ color: 0xe1b45b, size: .035, transparent: true, opacity: .6 })))
+const headlights = [-.62, .62].map(x => { const light = new THREE.PointLight(0xffe4ad, 0, 4); light.position.set(x, 1, 1.1); car.add(light); return light })
+let scrollProgress = 0
+window.addEventListener('scroll', () => { const hero = document.querySelector('.hero'); scrollProgress = Math.max(0, Math.min(1, (window.scrollY - hero.offsetTop) / Math.max(hero.offsetHeight - window.innerHeight, 1))) })
 function resize() { const el = document.querySelector('#scene'); const { width, height } = el.getBoundingClientRect(); camera.aspect = width / height; camera.updateProjectionMatrix(); renderer.setSize(width, height) }
 window.addEventListener('resize', resize); resize()
-function animate(time) { car.rotation.y = Math.sin(time * .00045) * .25 - .25; car.position.y = Math.sin(time * .0012) * .035; renderer.render(scene, camera); requestAnimationFrame(animate) }
+function animate(time) { const phase = scrollProgress * Math.PI * 2; car.rotation.y = Math.sin(time * .00045) * .25 - .25 + Math.sin(phase) * .18; car.position.x += ((Math.sin(phase * 1.5) * 1.7) - car.position.x) * .045; car.position.y = Math.sin(time * .0012) * .035; car.position.z += ((-3.5 + scrollProgress * 5.2) - car.position.z) * .045; camera.position.x += ((Math.sin(phase) * 1.4) - camera.position.x) * .035; camera.position.y += ((1.2 + Math.sin(phase * .5) * .6) - camera.position.y) * .035; camera.position.z += ((7 - scrollProgress * 2.8) - camera.position.z) * .035; camera.lookAt(car.position.x, 1, car.position.z); headlights.forEach(light => { light.intensity = 1.4 + scrollProgress * 2 }); renderer.render(scene, camera); requestAnimationFrame(animate) }
 requestAnimationFrame(animate)
 
 document.querySelectorAll('.car-card').forEach(card => card.addEventListener('click', () => { document.querySelectorAll('.car-card').forEach(c => c.classList.remove('active')); card.classList.add('active'); const v = vehicles[card.dataset.index]; document.querySelector('.scene-label').innerHTML = `${v.name.split(' ')[1].toUpperCase()} <small>0${Number(card.dataset.index) + 1} / 03</small>`; document.querySelector('.hero-car-image').src = v.image; document.querySelector('.hero-car-image').alt = `Sai Sandhya ${v.name} training car`; body.material.color.set(v.color) }))
